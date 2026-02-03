@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>For Umayma</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Great+Vibes&display=swap" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  height:100vh;
+  background:#ffe6f0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-family:Arial, sans-serif;
+  overflow:hidden;
+  text-align:center;
+  font-size:2.8rem;
+  transition:background 1.5s ease;
+}
+
+body.celebrate{
+  background:linear-gradient(120deg,#ff758f,#ffb3c6,#ffd6e0);
+  background-size:300% 300%;
+  animation:bgMove 6s ease infinite;
+}
+
+@keyframes bgMove{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+
+.page{
+  position:absolute;
+  opacity:0;
+  transition:opacity 1s;
+  max-width:90%;
+}
+
+.page.show{opacity:1;}
+
+.name,.moon{
+  font-family:'Pacifico', cursive;
+  font-size:4.6rem;
+  color:#ff2f7d;
+}
+
+.moon{color:#c9184a;}
+
+.valentine{
+  font-family:'Great Vibes', cursive;
+  font-size:5.2rem;
+  color:#c9184a;
+}
+
+.count{
+  font-size:6rem;
+  font-weight:bold;
+  color:#ff4d6d;
+}
+
+button{
+  padding:18px 36px;
+  font-size:1.6rem;
+  border:none;
+  border-radius:30px;
+  cursor:pointer;
+  margin:10px;
+}
+
+#yes{background:#ff4d6d;color:white;}
+#no{background:#ddd;position:relative;}
+
+.rose{font-size:80px;margin-top:20px;}
+
+.float{
+  position:absolute;
+  pointer-events:none;
+  animation:fall 7s linear forwards;
+}
+
+@keyframes fall{
+  from{transform:translateY(-10vh) rotate(0deg);opacity:1;}
+  to{transform:translateY(110vh) rotate(360deg);opacity:0;}
+}
+
+.firework{
+  position:absolute;
+  pointer-events:none;
+  font-size:20px;
+  animation:explode 1.5s ease-out forwards;
+}
+
+@keyframes explode{
+  0%{transform:scale(0);opacity:1;}
+  100%{transform:scale(1.5) translate(var(--x), var(--y));opacity:0;}
+}
+
+.glow{
+  animation:glow 2s ease-in-out infinite;
+}
+
+@keyframes glow{
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.08);}
+}
+</style>
+</head>
+
+<body>
+
+<script>
+/* floating hearts animation */
+let heartInterval=setInterval(()=>{
+  const h=document.createElement("div");
+  h.innerHTML="❤";
+  h.className="float";
+  h.style.left=Math.random()*100+"vw";
+  h.style.fontSize=(24+Math.random()*24)+"px";
+  h.style.color="#ff4d6d";
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),7000);
+},350);
+
+/* fireworks with flowers */
+function fireworks(){
+  let bursts = 0;
+  let fireInterval = setInterval(()=>{
+    bursts++;
+    for(let i=0;i<30;i++){
+      const f=document.createElement("div");
+      f.className="firework";
+      const flowers = ["🌸","🌹","💐"];
+      f.innerHTML = flowers[Math.floor(Math.random()*flowers.length)];
+      f.style.fontSize = (20 + Math.random()*20)+"px";
+      const angle = Math.random()*2*Math.PI;
+      const speed = 50 + Math.random()*80;
+      f.style.left = (50 + Math.cos(angle)*speed/2)+"vw";
+      f.style.top = (50 + Math.sin(angle)*speed/2)+"vh";
+      f.style.setProperty('--x', (Math.cos(angle)*speed)+'px');
+      f.style.setProperty('--y', (Math.sin(angle)*speed)+'px');
+      document.body.appendChild(f);
+      setTimeout(()=>f.remove(),1500);
+    }
+    if(bursts>=6) clearInterval(fireInterval);
+  },400);
+}
+</script>
+
+<div class="page show" id="p1"></div>
+<div class="page" id="p2"></div>
+<div class="page" id="p3"></div>
+<div class="page" id="p4"></div>
+<div class="page" id="p5"></div>
+
+<div class="page" id="countdown"></div>
+
+<div class="page" id="question">
+  <div class="valentine glow">Umayma, will you be my Valentine?</div>
+  <div class="rose">🌹</div>
+  <div>
+    <button id="yes">Yes</button>
+    <button id="no">No</button>
+  </div>
+</div>
+
+<div class="page" id="eid"></div>
+<div class="page" id="gift"></div>
+
+<script>
+/* Page sequence */
+const pages=[
+  {id:"p1", html:'Hey <span class="name">Umayma</span> ❤️', time:3000},
+  {id:"p2", html:'Or shall I call you <span class="moon">Moonlight</span>? ✨', time:3000},
+  {id:"p3", html:'I was just thinking of you, and thought why not get a smile on your face 😊', time:3000},
+  {id:"p4", html:'I know this is awkward, but I just wanted to show that if I ever had the chance, I would… 🤞', time:3000},
+  {id:"p5", html:'Here we go 💌', time:2500}
+];
+
+let index=0;
+function showPage(){
+  if(index>0) document.getElementById(pages[index-1].id).classList.remove("show");
+  if(index<pages.length){
+    const p=pages[index];
+    const el=document.getElementById(p.id);
+    el.innerHTML=p.html;
+    el.classList.add("show");
+    index++;
+    setTimeout(showPage,p.time);
+  }else{
+    document.getElementById("p5").classList.remove("show");
+    startCountdown();
+  }
+}
+showPage();
+
+/* Countdown before Valentine question */
+function startCountdown(){
+  const c=document.getElementById("countdown");
+  c.classList.add("show");
+  const nums=["3","2","1"];
+  let i=0;
+
+  function next(){
+    if(i<nums.length){
+      c.innerHTML='<div class="count">'+nums[i]+'</div>';
+      i++;
+      setTimeout(next,800);
+    }else{
+      c.classList.remove("show");
+      document.getElementById("question").classList.add("show");
+    }
+  }
+  next();
+}
+
+/* No button logic */
+const noTexts=["Wait… think again","Are you sure?","Please?","Guess I’ll change it now","YES"];
+let noCount=0;
+
+document.getElementById("no").onclick=()=>{
+  const no=document.getElementById("no");
+  no.textContent=noTexts[noCount];
+  no.style.left=Math.random()*200-100+"px";
+  no.style.top=Math.random()*100-50+"px";
+  noCount++;
+  if(noCount===noTexts.length){
+    no.onclick=()=>document.getElementById("yes").click();
+  }
+};
+
+/* Yes button logic */
+document.getElementById("yes").onclick=()=>{
+  document.body.classList.add("celebrate");
+  fireworks();
+  heartInterval && clearInterval(heartInterval);
+
+  document.getElementById("question").classList.remove("show");
+
+  const eid=document.getElementById("eid");
+  eid.innerHTML="<div class='glow'>Looks like the moon chose me.<br>Eid vibes today, Valentine who?</div>";
+  eid.classList.add("show");
+
+  setTimeout(()=>{
+    eid.classList.remove("show");
+    const gift=document.getElementById("gift");
+    gift.innerHTML="Here are flowers for the lady of flowers.<div class='rose'>🌸🌹</div>";
+    gift.classList.add("show");
+    fireworks(); // extra flower fireworks on final page
+  },4500);
+};
+</script>
+
+</body>
+</html>
